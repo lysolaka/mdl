@@ -77,7 +77,13 @@ impl serde::Serialize for Chapters {
 /// name the spec. Setting `id` to `None` will automatically assign an `id`.
 pub fn chapters(url: &Url, id: Option<&str>) -> crate::Result<Chapters> {
     log::debug!("Getting video URL of {}", url);
-    let url = super::get_video_url(url)?;
+    let url = match super::get_video_url(url) {
+        Ok(url) => url,
+        Err(e) => {
+            log::error!("{}", e);
+            return Err(e.into());
+        },
+    };
     log::info!("Fetching video info of {}", url);
     let info: Chapters = super::fetch(&url)?;
     log::info!("Finished fetching {}", url);
@@ -119,7 +125,13 @@ pub fn chapters_recursive(url: &Url, id: Option<&str>) -> crate::Result<Vec<Chap
     }
 
     log::debug!("Getting playlist URL of {}", url);
-    let url = super::get_playlist_url(url, false)?;
+    let url = match super::get_playlist_url(url, false) {
+        Ok(url) => url,
+        Err(e) => {
+            log::error!("{}", e);
+            return Err(e.into());
+        },
+    };
     log::info!("Fetching playlist info of {}", url);
     let ChaptersRecursive { entries } = super::fetch(&url)?;
     log::info!("Finished fetching {}", url);

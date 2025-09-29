@@ -24,7 +24,13 @@ where
 {
     let info = Python::attach(|py| -> crate::Result<T> {
         let info_dict = fetch_impl(py, url)?;
-        let info = depythonize(&info_dict)?;
+        let info = match depythonize(&info_dict) {
+            Ok(info) => info,
+            Err(e) => {
+                log::error!("{}", e);
+                return Err(e.into());
+            }
+        };
         Ok(info)
     })?;
     Ok(info)
@@ -64,7 +70,7 @@ fn fetch_impl<'py>(py: Python<'py>, url: &Url) -> PyResult<Bound<'py, PyAny>> {
 ///   * `https://www.youtube.com/watch?v=<vid>&list=<id>`
 /// - for Soundcloud the URL must be of the form:
 ///   * `https://soundcloud.com/<author>/sets/<id>` or in other words it has to contain `sets` in its path.
-fn get_playlist_url(url: &Url, enable_sc: bool) -> crate::Result<Url> {
+fn get_playlist_url(url: &Url, enable_sc: bool) -> Result<Url, GetUrlError> {
     match (url.host_str(), enable_sc) {
         (Some("www.youtube.com"), _) => {
             let id = url
@@ -93,7 +99,7 @@ fn get_playlist_url(url: &Url, enable_sc: bool) -> crate::Result<Url> {
 /// Extract the video URL from a possible video and playlist URL.
 ///
 /// This function returns the parsed video URL. Only YouTube links to videos are allowed.
-fn get_video_url(url: &Url) -> crate::Result<Url> {
+fn get_video_url(url: &Url) -> Result<Url, GetUrlError> {
     match url.host_str() {
         Some("www.youtube.com") => {
             let vid = url

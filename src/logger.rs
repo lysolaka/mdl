@@ -90,6 +90,8 @@ impl MDLogger {
         if let Some(m) = msg.strip_prefix("ERROR: ") {
             let m = strip_label(m);
             log::error!("{}", m);
+        } else {
+            log::error!("{}", msg);
         }
         Ok(())
     }

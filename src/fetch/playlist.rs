@@ -104,7 +104,13 @@ impl serde::Serialize for Track {
 /// name the spec. Setting `id` to `None` will automatically assign an `id`.
 pub fn playlist(url: &Url, id: Option<&str>) -> crate::Result<Playlist> {
     log::debug!("Getting playlist URL of {}", url);
-    let url = super::get_playlist_url(url, true)?;
+    let url = match super::get_playlist_url(url, true) {
+        Ok(url) => url,
+        Err(e) => {
+            log::error!("{}", e);
+            return Err(e.into());
+        },
+    };
     log::info!("Fetching playlist info of {}", url);
     let info = super::fetch(&url)?;
     log::info!("Finished fetching {}", url);
