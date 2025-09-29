@@ -29,7 +29,7 @@ genre = ""
 # Examples:
 # - a file `cover = "file:///home/user/Downloads/inazuma_album.jpg"`
 # - a network location `cover = "https://i.scdn.co/image/ab67616d0000b27359fff708b5e52974a8017d1d"`
-cover = "https://i.scdn.co/image/ab67616d0000b27359fff708b5e52974a8017d1d"
+cover = ""
 
 # Here comes a list of tracks. Each track is the same, so only one will be documented.
 # After downloading `chapters.url` the file will be split into chapters according to what is

@@ -30,7 +30,7 @@ track_total = 4
 # Examples:
 # - a file `cover = "file:///home/user/Downloads/yamahasake.jpg"`
 # - a network location `cover = "https://i1.sndcdn.com/artworks-000602000074-ocat8x-t500x500.jpg"`
-cover = "https://i1.sndcdn.com/artworks-000602000074-ocat8x-t500x500.jpg"
+cover = ""
 
 # Here comes a list of tracks. Each track is the same, so only one will be documented.
 [[track]]
