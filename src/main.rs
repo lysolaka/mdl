@@ -25,9 +25,9 @@ fn main() {
 }
 
 fn main_impl() -> mdl::Result<()> {
-    let u = "https://soundcloud.com/alcomindz/sets/koldi-kolins-dawaj-mixtape-2018";
+    let u = "https://www.youtube.com/watch?v=UG03kB-Wv_A";
     let url = Url::parse(&u)?;
-    let info = fetch::playlist(&url, None)?;
+    let info = fetch::chapters(&url, None)?;
     let info = toml::to_string(&info)?;
     println!("{}", info);
     Ok(())

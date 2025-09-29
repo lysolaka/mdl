@@ -1,6 +1,9 @@
 mod playlist;
 pub use playlist::{Playlist, playlist};
 
+mod chapters;
+pub use chapters::{Chapters, chapters, chapters_recursive};
+
 use pyo3::ffi::c_str;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -88,10 +91,33 @@ fn get_playlist_url(url: &Url, enable_sc: bool) -> crate::Result<Url> {
     }
 }
 
+/// Extract the video URL from a possible video and playlist URL.
+///
+/// This function returns the parsed video URL. Only YouTube links to videos are allowed.
+fn get_video_url(url: &Url) -> crate::Result<Url> {
+    match url.host_str() {
+        Some("www.youtube.com") => {
+            let vid = url
+                .query_pairs()
+                .find_map(|(k, v)| if k == "v" { Some(v) } else { None })
+                .ok_or_else(|| GetUrlError::NotVideo(url.to_string()))?;
+
+            let mut url = url.clone();
+            url.set_path("watch");
+            url.set_query(Some(&format!("v={}", vid)));
+
+            Ok(url)
+        }
+        _ => Err(GetUrlError::Unsupported(url.to_string()).into()),
+    }
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum GetUrlError {
     #[error("`{0}` is not a playlist URL")]
     NotPlaylist(String),
+    #[error("`{0}` is not a video URL")]
+    NotVideo(String),
     #[error("`{0}` is an unsound (we don't know what to do with it) URL")]
     Unsound(String),
     #[error("fetching `{0}` is not supported")]

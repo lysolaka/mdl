@@ -3,8 +3,8 @@ use url::Url;
 
 /// A structure representing a fetched playlist and its interesting data.
 ///
-/// It should only be used to fetch and to save to a specfile. Deserializing a specfile into this 
-/// struct is an error because the [`serde::Serialize`] and [`serde::Deserialize`] implementations 
+/// It should only be used to fetch and to save to a specfile. Deserializing a specfile into this
+/// struct is an error because the [`serde::Serialize`] and [`serde::Deserialize`] implementations
 /// are not reciprocal.
 #[derive(Debug, serde::Deserialize)]
 pub struct Playlist {
@@ -96,11 +96,11 @@ impl serde::Serialize for Track {
 ///
 /// Supported URLs are:
 /// - YouTube playlists
-/// - YouTube videos inside a playlist
+/// - YouTube videos inside a playlist (the entire playlist will be fetched)
 /// - Soundcloud playlists (sets)
 ///
-/// The `id` is a user identifier - it has nothing to do with the actual content, 
-/// the user may set it to `Some(id)` and that `id` will be used by the program to 
+/// The `id` is a user identifier - it has nothing to do with the actual content,
+/// the user may set it to `Some(id)` and that `id` will be used by the program to
 /// name the spec. Setting `id` to `None` will automatically assign an `id`.
 pub fn playlist(url: &Url, id: Option<&str>) -> crate::Result<Playlist> {
     log::debug!("Getting playlist URL of {}", url);
@@ -109,10 +109,16 @@ pub fn playlist(url: &Url, id: Option<&str>) -> crate::Result<Playlist> {
     let info = super::fetch(&url)?;
     log::info!("Finished fetching {}", url);
     match id {
-        Some(id) => Ok(Playlist {
-            id: id.to_string(),
-            ..info
-        }),
-        None => Ok(info),
+        Some(id) => {
+            log::trace!("Setting ID to {} for {}", id, url);
+            Ok(Playlist {
+                id: id.to_string(),
+                ..info
+            })
+        }
+        None => {
+            log::trace!("No ID provided for {}, using {}", url, info.id);
+            Ok(info)
+        },
     }
 }
