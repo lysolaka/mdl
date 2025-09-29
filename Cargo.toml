@@ -2,6 +2,10 @@
 name = "mdl"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+description = "A CLI music downloader based on specfiles"
+repository = "https://github.com/lysolaka/mdl"
+readme = "README.md"
 
 [dependencies]
 anstyle = "1.0.8"
