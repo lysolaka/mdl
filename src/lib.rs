@@ -2,10 +2,11 @@
 
 pub mod fetch;
 pub mod logger;
+pub mod specfile;
 
-/// Result type, equivalent to [`std::result::Result<T, MDLError>`]
+/// Result type, equivalent to [`std::result::Result<T, MDLError>`].
 ///
-/// Do not import this type - using [`mdl::Result<T>`] or [`crate::Result<T>`] is much more 
+/// Do not import this type - using [`mdl::Result<T>`] or [`crate::Result<T>`] is much more
 /// cleaner.
 pub type Result<T> = std::result::Result<T, MDLError>;
 
@@ -22,6 +23,12 @@ pub enum MDLError {
     UrlParse(#[from] url::ParseError),
     #[error("TOML serialization failed")]
     TOMLSer(#[from] toml::ser::Error),
+    #[error("TOML deserialization failed")]
+    TOMLDe(#[from] toml::de::Error),
     #[error("can't determine the URL")]
-    GetUrlError(#[from] fetch::GetUrlError),
+    GetUrlError(#[from] crate::fetch::GetUrlError),
+    #[error("cannot process a specfile")]
+    SpecError(#[from] crate::specfile::SpecError),
+    #[error("IO error")]
+    IoError(#[from] std::io::Error),
 }

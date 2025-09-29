@@ -1,5 +1,11 @@
+use std::fs;
+use std::io::{self, Write};
+use std::path::{Path, PathBuf};
+
 use serde::ser::{Error, SerializeStruct};
 use url::Url;
+
+use crate::specfile::SpecError;
 
 /// A structure representing a fetched playlist and its interesting data.
 ///
@@ -22,6 +28,15 @@ pub struct Playlist {
     cover: String,
     #[serde(rename(deserialize = "entries"))]
     tracks: Vec<Track>,
+}
+
+impl Playlist {
+    /// Serialize the specfile to `<id>.toml`.
+    ///
+    /// If `destdir` is `Some(path)`, the save the specfile to `path/<id>.toml`
+    pub fn write_to(&self, destdir: Option<impl AsRef<Path>>) -> crate::Result<()> {
+        super::write_to_impl(&self, &self.id, destdir)
+    }
 }
 
 #[derive(Debug, serde::Deserialize)]

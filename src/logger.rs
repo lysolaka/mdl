@@ -13,7 +13,7 @@ struct Logger {
     level: log::LevelFilter,
 }
 
-/// Initialize a logger with the log level set to `log_level`
+/// Initialize a logger with the log level set to `log_level`.
 ///
 /// # Panics
 ///

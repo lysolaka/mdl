@@ -1,5 +1,11 @@
+use std::fs;
+use std::io::{self, Write};
+use std::path::{Path, PathBuf};
+
 use serde::ser::{Error, SerializeStruct};
 use url::Url;
+
+use crate::specfile::SpecError;
 
 /// A struct representing a fetched album from signle video's chapters.
 ///
@@ -22,6 +28,15 @@ pub struct Chapters {
     cover: String,
     #[serde(rename(deserialize = "chapters"))]
     tracks: Option<Vec<Track>>,
+}
+
+impl Chapters {
+    /// Serialize the specfile to `<id>.toml`.
+    ///
+    /// If `destdir` is `Some(path)`, the save the specfile to `path/<id>.toml`
+    pub fn write_to(&self, destdir: Option<impl AsRef<Path>>) -> crate::Result<()> {
+        super::write_to_impl(&self, &self.id, destdir)
+    }
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -82,7 +97,7 @@ pub fn chapters(url: &Url, id: Option<&str>) -> crate::Result<Chapters> {
         Err(e) => {
             log::error!("{}", e);
             return Err(e.into());
-        },
+        }
     };
     log::info!("Fetching video info of {}", url);
     let info: Chapters = super::fetch(&url)?;
@@ -130,7 +145,7 @@ pub fn chapters_recursive(url: &Url, id: Option<&str>) -> crate::Result<Vec<Chap
         Err(e) => {
             log::error!("{}", e);
             return Err(e.into());
-        },
+        }
     };
     log::info!("Fetching playlist info of {}", url);
     let ChaptersRecursive { entries } = super::fetch(&url)?;
@@ -149,7 +164,7 @@ pub fn chapters_recursive(url: &Url, id: Option<&str>) -> crate::Result<Vec<Chap
                 })
                 .enumerate()
                 .map(|(i, s)| {
-                    let id = format!("{}_{}", id, i);
+                    let id = format!("{}_{}", id, i + 1);
                     log::trace!("Setting ID to {} for {}", id, &s.url);
                     Chapters { id, ..s }
                 })

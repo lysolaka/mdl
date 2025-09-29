@@ -4,6 +4,10 @@ pub use playlist::{Playlist, playlist};
 mod chapters;
 pub use chapters::{Chapters, chapters, chapters_recursive};
 
+use std::fs;
+use std::io::{self, Write};
+use std::path::{Path, PathBuf};
+
 use pyo3::ffi::c_str;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -13,6 +17,7 @@ use url::Url;
 
 use crate::MDLError;
 use crate::logger;
+use crate::specfile::SpecError;
 
 /// Python dispatcher to `yt_dlp --dump_single_json`.
 ///
@@ -57,6 +62,54 @@ fn fetch_impl<'py>(py: Python<'py>, url: &Url) -> PyResult<Bound<'py, PyAny>> {
     let info_dict = ydl.call_method1("extract_info", (url.as_str(), false))?;
     let info_dict = ydl.call_method1("sanitize_info", (info_dict,))?;
     Ok(info_dict)
+}
+
+fn write_to_impl<T, P>(s: &T, id: &str, destdir: Option<P>) -> crate::Result<()>
+where
+    T: serde::Serialize,
+    P: AsRef<Path>,
+{
+    let file_name = format!("{}.toml", id);
+    let path = match destdir {
+        Some(dir) => match fs::create_dir_all(dir.as_ref()) {
+            Ok(_) => dir.as_ref().join(file_name),
+            Err(e) => {
+                log::error!("Cannot create directory {}: {}", dir.as_ref().display(), e);
+                return Err(SpecError::IoError("creating", dir.as_ref().to_path_buf(), e).into());
+            }
+        },
+        None => PathBuf::from(file_name),
+    };
+
+    log::info!("Saving specfile {} to {}", id, path.display());
+    log::debug!("Serializing {} to TOML", id);
+    let spec_str = match toml::to_string(s) {
+        Ok(s) => s,
+        Err(e) => {
+            log::error!("TOML serialization failed: {}", e);
+            return Err(SpecError::Serialization(id.to_string(), e).into());
+        }
+    };
+
+    let mut file = match fs::File::create(&path) {
+        Ok(f) => f,
+        Err(e) => {
+            log::error!("Cannot create {}: {}", path.display(), e);
+            return Err(SpecError::IoError("creating", path, e).into());
+        }
+    };
+    let write: io::Result<()> = {
+        file.write_all(spec_str.as_bytes())?;
+        file.flush()?;
+        Ok(())
+    };
+
+    if let Err(e) = write {
+        log::error!("Error writing {}: {}", path.display(), e);
+        return Err(SpecError::IoError("writing", path, e).into());
+    }
+    log::debug!("Successfully written {} to {}", id, path.display());
+    Ok(())
 }
 
 /// Determine the URL which should be used when fetching playlists.
@@ -117,6 +170,7 @@ fn get_video_url(url: &Url) -> Result<Url, GetUrlError> {
     }
 }
 
+/// Additional URL parsing errors.
 #[derive(Debug, thiserror::Error)]
 pub enum GetUrlError {
     #[error("`{0}` is not a playlist URL")]
