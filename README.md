@@ -55,7 +55,13 @@ For playlists:
 
 # Specfile format
 
-TODO: (specdoc)
+For how to edit or write specfiles see the `specdoc` directory. Inside you will find:
+- `chapters.toml`: Documentation for chapter album specfiles
+- `sc-playlist.toml`: Documentation for playlist album specfiles - what you might expect when fetching from Soundcloud
+- `yt-playlist.toml`: Documentation for playlist album specfiles - what you might expect when fetching from YouTube
+
+`sc-playlist.toml` and `yt-playlist.toml` are almost the same, but both are included because Soundcloud offers some more 
+metadata than YouTube.
 
 # Usage
 

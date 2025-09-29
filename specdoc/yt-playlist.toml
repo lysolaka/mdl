@@ -1,0 +1,71 @@
+# Documentation for YouTube playlist album specfiles.
+# Below you will find an unmodified, but commented specfile obtained by fetching:
+# `https://www.youtube.com/playlist?list=PLIC0e5gHaJVvWtPHxZ37hSOlxWSsq8pmX`
+# Note that the same specfile would be obtained by fetching:
+# `https://www.youtube.com/watch?v=BCHwGbuc0Dk&list=PLIC0e5gHaJVvWtPHxZ37hSOlxWSsq8pmX`
+# because that url is the same playlist, but playing a video.
+
+# Playlist albums start with the `playlist` table.
+[playlist]
+# This id can be changed - it is used for naming directories and logging. In other words it is for you to change.
+id = "PLIC0e5gHaJVvWtPHxZ37hSOlxWSsq8pmX"
+# The title of the album - used for tagging and as the name of the output directory for tagged files.
+# Do not worry about making it path safe, the program will sanitise the path if necessary (not yet implemented).
+title = "KOLDI - YAMAHASAKE EP [2016]"
+# The release year of the album. It is not used when the output format is `mp3` because ID3 is annoying with dates
+# and it does not display them in music players anyway (maybe a library issue or the music player's).
+# It is only the year in four digit format, e.g `2015`. Passing anything more will just truncate it to four digits:
+# `2019-10-23` becomes `2019`.
+release_year = ""
+# Album artists is an array (vector) of strings with names. These strings will be concatenated using commas.
+album_artists = []
+# Genre of the album. DO NOT pass an ID3 genre id - the program does not make any attempt to resolve that.
+# The unmodified string literal is set as the genre field.
+genre = ""
+# The total number of tracks in the album. One could think it is useless, BUT some albums might be missing tracks due
+# to time passing or copyright stuff. Adjust this if necessary and remember to correct track numbers too.
+track_total = 4
+# The front cover URL, may be the `file` or `http`(`s`) scheme. If it is a file it will be read from the local
+# filesystem. In the other cases it will be fetched from the Internet.
+# Examples:
+# - a file `cover = "file:///home/user/Downloads/yamahasake.jpg"`
+# - a network location `cover = "https://i1.sndcdn.com/artworks-000602000074-ocat8x-t500x500.jpg"`
+cover = "https://i1.sndcdn.com/artworks-000602000074-ocat8x-t500x500.jpg"
+
+# Here comes a list of tracks. Each track is the same, so only one will be documented.
+[[track]]
+# The url of the track automatically obtained from fetching. Any single YouTube URL can be passed here, 
+# but has to be in the format below. You can also pass a single video Soundcloud URL in case a track is missing from
+# the playlist (just create a new `track` entry). If adding a Soundcloud URL make sure it is of the same format as 
+# described in `specdoc/sc-album.toml`. Files are also supported if you magically own a copy of the missing track.
+# For how to specify local file URLs look at `album.cover`.
+url = "https://www.youtube.com/watch?v=BCHwGbuc0Dk"
+# The title used for tagging and as a resulting file name of the tagged file.
+# Here you would likely want to remove the "artist" and featured "artists".
+# The file name of the tagged file will be `<track_num>. <title>` with `track_num` padded to two digits.
+title = "Koldi - Kachisuke-onna (feat. Lagi, BaQu)"
+# Contributing artists as an array of strings. These strings will be concatenated using commas.
+# It is planned to make this field optional, in the case it's not present the `chapters.album_artists` field
+# will be used. In this case you would set it to `artists = ["Koldi", "Lagi", "BaQu"]`
+artists = []
+# The track number. If you add an entry with a foreign URL remember to correct this field in the other tracks.
+# This field can also be used to reorder tracks if necessary.
+track_num = 1
+
+[[track]]
+url = "https://www.youtube.com/watch?v=Q6ECszlj4Zk"
+title = "Koldi - Noriaki Kasai"
+artists = []
+track_num = 2
+
+[[track]]
+url = "https://www.youtube.com/watch?v=74vOqnAYMlQ"
+title = "00. Koldi - Kold Killa 2 (Bonus Track) [YAMAHASAKE Mixtape]"
+artists = []
+track_num = 3
+
+[[track]]
+url = "https://www.youtube.com/watch?v=-rE-j8fbbgM"
+title = "Koldi - Flasheed [prod. Koldi]"
+artists = []
+track_num = 4

@@ -1,0 +1,68 @@
+# Documentation for chapter album specfiles.
+# Below you will find an unmodified, but commented specfile obtained by fetching:
+# `https://www.youtube.com/watch?v=B2JFHBB-zRE`
+# Note that the same specfile would be obtained by fetching:
+# `https://www.youtube.com/watch?v=B2JFHBB-zRE&list=PLqWr7dyJNgLK45KSPhhti4FcWLhEWlegt&index=2`
+# That is the same video, but as a part of some playlist.
+
+# Chapter albums start with a `chapters` table.
+[chapters]
+# This id can be changed - it is used for naming directories and logging. In other words it is for you to change.
+id = "B2JFHBB-zRE"
+# Do not touch this URL - it was obtained by the program and will be passed to `yt-dlp`.
+url = "https://www.youtube.com/watch?v=B2JFHBB-zRE"
+# The title of the album - used for tagging and as the name of the output directory for tagged files.
+# Do not worry about making it path safe, the program will sanitise the path if necessary (not yet implemented).
+title = "Realm of Tranquil Eternity - Disc 3: Battles of Inazuma｜Genshin Impact"
+# The release year of the album. It is not used when the output format is `mp3` because ID3 is annoying with dates
+# and it does not display them in music players anyway (maybe a library issue or the music player's).
+# It is only the year in four digit format, e.g `2015`. Passing anything more will just truncate it to four digits:
+# `2019-10-23` becomes `2019`.
+release_year = ""
+# Album artists is an array (vector) of strings with names. These strings will be concatenated using commas.
+album_artists = []
+# Genre of the album. DO NOT pass an ID3 genre id - the program does not make any attempt to resolve that.
+# The unmodified string literal is set as the genre field.
+genre = ""
+# The front cover URL, may be the `file` or `http`(`s`) scheme. If it is a file it will be read from the local
+# filesystem. In the other cases it will be fetched from the Internet.
+# Examples:
+# - a file `cover = "file:///home/user/Downloads/inazuma_album.jpg"`
+# - a network location `cover = "https://i.scdn.co/image/ab67616d0000b27359fff708b5e52974a8017d1d"`
+cover = "https://i.scdn.co/image/ab67616d0000b27359fff708b5e52974a8017d1d"
+
+# Here comes a list of tracks. Each track is the same, so only one will be documented.
+# After downloading `chapters.url` the file will be split into chapters according to what is
+# described below.
+[[track]]
+# The title used for tagging and as a resulting file name of the tagged file.
+# In this case it would be clean to remove the leading `01 `. The file name of the tagged file
+# will be `<track_num>. <title>` with `track_num` padded to two digits.
+title = "01 Duel in the Mist"
+# Contributing artists as an array of strings. These strings will be concatenated using commas.
+# It is planned to make this field optional, in the case it's not present the `chapters.album_artists` field
+# will be used.
+artists = []
+# Start time of the chapter in seconds. There should be no need to modify it, unless the chapter's timing is wrong.
+start_time = 0.0
+# End time of the chapter in seconds. It is not the length, but an absolute offset from the start. Regarding modifying
+# this field what is written above also applies here.
+end_time = 254.0
+
+[[track]]
+title = "02 Against the Invisible Net"
+artists = []
+start_time = 254.0
+end_time = 509.0
+
+[[track]]
+title = "03 Overlord of the Thunderstorm"
+artists = []
+start_time = 509.0
+end_time = 770.0
+
+[[track]]
+title = "04 Fiery Pursuit"
+artists = []
+start_time = 770.0
+end_time = 1034.0
