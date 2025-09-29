@@ -16,7 +16,7 @@ use crate::logger;
 
 /// Python dispatcher to `yt_dlp --dump_single_json`.
 ///
-/// In particular this function calls `ydl.extract_info(url, false)`, where 
+/// In particular this function calls `ydl.extract_info(url, false)`, where
 /// `ydl` is a properly configured `YoutubeDL` instance.
 fn fetch<T>(url: &Url) -> crate::Result<T>
 where
@@ -52,7 +52,6 @@ fn fetch_impl<'py>(py: Python<'py>, url: &Url) -> PyResult<Bound<'py, PyAny>> {
     let info_dict = ydl.call_method1("sanitize_info", (info_dict,))?;
     Ok(info_dict)
 }
-
 
 /// Determine the URL which should be used when fetching playlists.
 ///
@@ -122,4 +121,90 @@ pub enum GetUrlError {
     Unsound(String),
     #[error("fetching `{0}` is not supported")]
     Unsupported(String),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::get_playlist_url;
+    use super::get_video_url;
+    use url::Url;
+
+    #[test]
+    fn youtube_playlist_url() -> crate::Result<()> {
+        let u =
+            Url::parse("https://www.youtube.com/playlist?list=PLx6F6orIEZdmbMQyQKYXq2R0XLgYk1Lpw")?;
+        let url = get_playlist_url(&u, false)?;
+        assert_eq!(url, u);
+
+        let u = Url::parse(
+            "https://www.youtube.com/watch?v=rzurrERdmpI&list=PLx6F6orIEZdmbMQyQKYXq2R0XLgYk1Lpw",
+        )?;
+        let url = get_playlist_url(&u, false)?;
+        assert_eq!(
+            url,
+            Url::parse("https://www.youtube.com/playlist?list=PLx6F6orIEZdmbMQyQKYXq2R0XLgYk1Lpw")?
+        );
+
+        let u = Url::parse("https://www.youtube.com/watch?v=rzurrERdmpI")?;
+        assert!(get_playlist_url(&u, false).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn soundcloud_playlist_url() -> crate::Result<()> {
+        let u =
+            Url::parse("https://soundcloud.com/alcomindz/sets/koldi-kolins-dawaj-mixtape-2018")?;
+        let url = get_playlist_url(&u, true)?;
+        assert_eq!(url, u);
+
+        let u =
+            Url::parse("https://soundcloud.com/alcomindz/sets/koldi-kolins-dawaj-mixtape-2018")?;
+        assert!(get_playlist_url(&u, false).is_err());
+
+        let u = Url::parse("https://soundcloud.com/alcomindz/albums")?;
+        assert!(get_playlist_url(&u, true).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn unsound_playlist_url() -> crate::Result<()> {
+        let u = Url::parse("https://www.nottube.ru/watch?v=rzurrERdmpI")?;
+        assert!(get_playlist_url(&u, true).is_err());
+
+        let u = Url::parse("https://soundcloud.com")?;
+        assert!(get_playlist_url(&u, true).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn youtube_video_url() -> crate::Result<()> {
+        let u = Url::parse(
+            "https://www.youtube.com/watch?v=vnd35SLG4Yc&list=PLqWr7dyJNgLKjMUfZ7mnuPFLxX813sm8K",
+        )?;
+        let url = get_video_url(&u)?;
+        assert_eq!(
+            url,
+            Url::parse("https://www.youtube.com/watch?v=vnd35SLG4Yc")?
+        );
+
+        let u = Url::parse("https://www.youtube.com/watch?v=vnd35SLG4Yc")?;
+        let url = get_video_url(&u)?;
+        assert_eq!(url, u);
+
+        let u =
+            Url::parse("https://www.youtube.com/playlist?list=PLqWr7dyJNgLK45KSPhhti4FcWLhEWlegt")?;
+        assert!(get_video_url(&u).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn unsound_video_url() -> crate::Result<()> {
+        let u =
+            Url::parse("https://soundcloud.com/alcomindz/sets/koldi-kolins-dawaj-mixtape-2018")?;
+        assert!(get_video_url(&u).is_err());
+
+        let u = Url::parse("https://docs.rs")?;
+        assert!(get_video_url(&u).is_err());
+        Ok(())
+    }
 }
