@@ -771,7 +771,6 @@ dependencies = [
  "reqwest",
  "rustc-hash",
  "serde",
- "serde_json",
  "thiserror",
  "toml",
  "url",
