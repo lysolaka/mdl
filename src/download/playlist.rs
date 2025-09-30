@@ -29,6 +29,7 @@ impl Playlist {
             return Err(DownloadError::IoError("creating the output directory", e).into());
         }
 
+        let mut is_complete = true;
         let len = self.tracks().len();
         for (i, t) in self
             .tracks()
@@ -55,17 +56,20 @@ impl Playlist {
                             t.title(),
                             t.url()
                         );
+                        is_complete = false;
                         continue;
                     }
                 };
                 if let Err(e) = fs::copy(file, outpath) {
                     log::error!(
-                        "({}/{}) Copying {} ({}) failed: cannot determine the input file path",
+                        "({}/{}) Copying {} ({}) failed: {}",
                         i + 1,
                         len,
                         t.title(),
-                        t.url()
+                        t.url(),
+                        e
                     );
+                    is_complete = false;
                 }
             } else {
                 log::info!(
@@ -85,6 +89,7 @@ impl Playlist {
                         t.url(),
                         e
                     );
+                    is_complete = false;
                     if let Some(source) = e.source() {
                         log::error!("{}", source);
                     }
@@ -97,7 +102,11 @@ impl Playlist {
             self.id(),
             outdir.display()
         );
-        Ok(())
+        if is_complete {
+            Ok(())
+        } else {
+            Err(DownloadError::Incomplete.into())
+        }
     }
 }
 

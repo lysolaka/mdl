@@ -41,4 +41,6 @@ pub enum DownloadError {
     Python(#[from] pyo3::PyErr),
     #[error("IO error when {0}")]
     IoError(&'static str, #[source] std::io::Error),
+    #[error("not all files were downloaded/copied successfully")]
+    Incomplete,
 }
