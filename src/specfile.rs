@@ -141,6 +141,50 @@ impl Chapters {
         log::debug!("Reading chapters specfile from {}", path.as_ref().display());
         read_from_impl(path)
     }
+
+    /// Returns the chapter album's "user" ID.
+    pub fn id(&self) -> &str {
+        &self.header.id
+    }
+
+    /// Return the chapters' source URL.
+    pub fn url(&self) -> &Url {
+        &self.header.url
+    }
+
+    /// The [`Chapters`] file ID used for uniquely naming files.
+    ///
+    /// It is implemented as a non-cryptografic hash of the URL hashed using [`rustc_hash::FxHasher`].
+    ///
+    /// This function DOES NOT validate the URL.
+    pub fn file_id(&self) -> String {
+        let mut hasher = FxHasher::with_seed(0x24af6a1405a3c813);
+        hasher.write(self.header.url.as_str().as_bytes());
+        let h = hasher.finish();
+        format!("{h:016x}")
+    }
+
+    /// Checks if the URL is a former output of fetch.
+    pub fn is_url_ok(&self) -> bool {
+        match self.header.url.host_str() {
+            Some("www.youtube.com") => {
+                let is_video = self.header.url.query_pairs().find(|(k, _)| k == "v").is_some();
+                let is_single = self.header.url.query_pairs().count() == 1;
+                is_video && is_single
+            }
+            _ => false,
+        }
+    }
+
+    /// Returns the chapter album's title.
+    pub fn title(&self) -> &str {
+        &self.header.title
+    }
+
+    /// An iterator over the chapter tracks.
+    pub fn tracks(&self) -> std::slice::Iter<ChapterTrack> {
+        self.tracks.iter()
+    }
 }
 
 /// An enum representing a spec, either [`Playlist`] or [`Chapters`].

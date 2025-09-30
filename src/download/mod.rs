@@ -1,4 +1,5 @@
 mod playlist;
+mod chapters;
 
 use std::fs;
 use std::path::Path;
@@ -43,4 +44,6 @@ pub enum DownloadError {
     IoError(&'static str, #[source] std::io::Error),
     #[error("not all files were downloaded/copied successfully")]
     Incomplete,
+    #[error("the URL `{0}` is not a former output of fetch")]
+    InvalidURL(Url),
 }

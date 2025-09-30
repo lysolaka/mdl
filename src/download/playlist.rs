@@ -12,7 +12,7 @@ impl Playlist {
     /// Download all tracks in the playlist.
     ///
     /// If `outdir` is `None`, put the downloaded tracks in the `./<playlist-id>/` directory, when
-    /// `outdir` is `Some(path)` the downloaded will be put to `<path>/<playlist-id>/`.
+    /// `outdir` is `Some(path)` the downloaded tracks will be put to `<path>/<playlist-id>/`.
     pub fn download(&self, outdir: Option<impl AsRef<Path>>) -> crate::Result<()> {
         let outdir = match outdir {
             Some(dir) => dir.as_ref().join(self.id()),

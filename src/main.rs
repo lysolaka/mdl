@@ -45,10 +45,10 @@ fn main_impl() -> mdl::Result<()> {
     //     i.write_to(Some("specs/"))?;
     // }
 
-    let spec = Spec::read_from("specs/dawaj.toml")?;
+    let spec = Spec::read_from("specs/inazuma_2.toml")?;
     match spec {
-        Spec::Playlist(playlist) => playlist.download(Some("dl"))?,
-        Spec::Chapters(_) => unreachable!(),
+        Spec::Playlist(_) => unreachable!(), 
+        Spec::Chapters(chapters) => chapters.download(Some("dl"))?,
     }
     Ok(())
 }
