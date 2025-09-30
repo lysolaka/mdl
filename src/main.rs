@@ -4,7 +4,7 @@ use mdl::logger;
 use mdl::specfile::Spec;
 
 fn main() {
-    logger::init(log::LevelFilter::Debug);
+    logger::init(log::LevelFilter::Trace);
     if let Err(e) = main_impl() {
         eprintln!("\nError: {}", e);
 
@@ -45,16 +45,10 @@ fn main_impl() -> mdl::Result<()> {
     //     i.write_to(Some("specs/"))?;
     // }
 
-    let spec = Spec::read_from("specs/012.toml")?;
-    assert!(matches!(spec, Spec::Playlist(_)));
-
     let spec = Spec::read_from("specs/dawaj.toml")?;
-    assert!(matches!(spec, Spec::Playlist(_)));
-
-    let spec = Spec::read_from("specs/v5-2.toml")?;
-    assert!(matches!(spec, Spec::Chapters(_)));
-
-    let spec = Spec::read_from("Cargo.toml");
-    assert!(spec.is_err());
+    match spec {
+        Spec::Playlist(playlist) => playlist.download(Some("dl"))?,
+        Spec::Chapters(_) => unreachable!(),
+    }
     Ok(())
 }

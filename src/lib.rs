@@ -1,5 +1,6 @@
 #![allow(unused)]
 
+pub mod download;
 pub mod fetch;
 pub mod logger;
 pub mod specfile;
@@ -25,10 +26,12 @@ pub enum MDLError {
     TOMLSer(#[from] toml::ser::Error),
     #[error("TOML deserialization failed")]
     TOMLDe(#[from] toml::de::Error),
+    #[error("IO error")]
+    IoError(#[from] std::io::Error),
     #[error("can't determine the URL")]
     GetUrlError(#[from] crate::fetch::GetUrlError),
     #[error("cannot process a specfile")]
     SpecError(#[from] crate::specfile::SpecError),
-    #[error("IO error")]
-    IoError(#[from] std::io::Error),
+    #[error("download error")]
+    DownloadError(#[from] crate::download::DownloadError),
 }

@@ -1,7 +1,9 @@
 use std::fs;
+use std::hash::Hasher;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use rustc_hash::FxHasher;
 use url::Url;
 
 /// Structure representing a playlist specfile.
@@ -38,6 +40,69 @@ impl Playlist {
     pub fn read_from(path: impl AsRef<Path>) -> crate::Result<Self> {
         log::debug!("Reading playlist specfile from {}", path.as_ref().display());
         read_from_impl(path)
+    }
+
+    /// Returns the playlist's "user" ID.
+    pub fn id(&self) -> &str {
+        &self.header.id
+    }
+
+    /// Returns the playlist's title.
+    pub fn title(&self) -> &str {
+        &self.header.title
+    }
+
+    /// An iterator over the playlist's tracks.
+    pub fn tracks(&self) -> std::slice::Iter<PlaylistTrack> {
+        self.tracks.iter()
+    }
+}
+
+impl PlaylistTrack {
+    /// Returns the track's URL.
+    pub fn url(&self) -> &Url {
+        &self.url
+    }
+
+    /// Returns the track's title.
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
+    /// The [`PlaylistTrack`]'s id, used as a resulting filename for downloads and copies.
+    ///
+    /// It is implemented as a non-cryptografic hash of the URL hashed using [`rustc_hash::FxHasher`].
+    ///
+    /// This function DOES NOT validate the URL.
+    pub fn id(&self) -> String {
+        let mut hasher = FxHasher::with_seed(0x243f6a8885a308d3);
+        hasher.write(self.url.as_str().as_bytes());
+        let h = hasher.finish();
+        format!("{h:016x}")
+    }
+
+    /// Check if the URL is a former output of fetch.
+    ///
+    /// If the URL has scheme `file`, this function will return `true`.
+    pub fn is_url_ok(&self) -> bool {
+        if self.url.scheme() == "file" {
+            return true;
+        }
+
+        match self.url.host_str() {
+            Some("www.youtube.com") => {
+                let is_video = self.url.query_pairs().find(|(k, _)| k == "v").is_some();
+                let is_single = self.url.query_pairs().count() == 1;
+                is_video && is_single
+            }
+            Some("api-v2.soundcloud.com") => self.url.path_segments().map_or(false, |mut ps| {
+                let tracks = ps.next().map_or(false, |s| s == "tracks");
+                let id = ps.next().map_or(false, |id| id.parse::<u64>().is_ok());
+                let nothing = ps.next().is_none();
+                tracks && id && nothing
+            }),
+            _ => false,
+        }
     }
 }
 
