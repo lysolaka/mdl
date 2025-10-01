@@ -1,10 +1,10 @@
 use std::error::Error;
 
 use mdl::logger;
-use mdl::specfile::Spec;
+use mdl::specfile::{Spec, Format};
 
 fn main() {
-    logger::init(log::LevelFilter::Trace);
+    logger::init(log::LevelFilter::Info);
     if let Err(e) = main_impl() {
         eprintln!("\nError: {}", e);
 
@@ -48,7 +48,10 @@ fn main_impl() -> mdl::Result<()> {
     let spec = Spec::read_from("specs/inazuma_2.toml")?;
     match spec {
         Spec::Playlist(_) => unreachable!(), 
-        Spec::Chapters(chapters) => chapters.download(Some("dl"))?,
+        Spec::Chapters(chapters) => {
+            // chapters.download(Some("dl"))?;
+            chapters.postprocess(Format::Mp3, true, Some("dl"))?;
+        },
     }
     Ok(())
 }

@@ -187,6 +187,18 @@ impl Chapters {
     }
 }
 
+impl ChapterTrack {
+    /// Return the track's title.
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
+    /// Return a tuple of `(start_time, end_time)`.
+    pub fn range(&self) -> (f32, f32) {
+        (self.start_time, self.end_time)
+    }
+}
+
 /// An enum representing a spec, either [`Playlist`] or [`Chapters`].
 ///
 /// Look at [`Playlist::read_from()`] or [`Chapters::read_from()`] if the type of the spec is
@@ -225,6 +237,42 @@ impl Spec {
         } else {
             log::error!("Unknown specfile format of {}", path.as_ref().display());
             Err(SpecError::UnknownFormat(path.as_ref().to_path_buf()).into())
+        }
+    }
+}
+
+/// The target format of audio files.
+///
+/// For now supported are FLAC and MP3 with their respective tag formats
+#[derive(Debug, Clone, Copy)]
+pub enum Format {
+    Flac,
+    Mp3,
+}
+
+impl Format {
+    /// The `ffmpeg` audio codec for the format.
+    pub fn codec(&self) -> &'static str {
+        match self {
+            Format::Flac => "flac",
+            Format::Mp3 => "libmp3lame",
+        }
+    }
+
+    /// The format's file extension
+    pub fn ext(&self) -> &'static str {
+        match self {
+            Format::Flac => "flac",
+            Format::Mp3 => "mp3",
+        }
+    }
+}
+
+impl std::fmt::Display for Format {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Format::Flac => write!(f, "FLAC"),
+            Format::Mp3 => write!(f, "MP3"),
         }
     }
 }

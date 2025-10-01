@@ -3,6 +3,7 @@
 pub mod download;
 pub mod fetch;
 pub mod logger;
+pub mod post;
 pub mod specfile;
 
 /// Result type, equivalent to [`std::result::Result<T, MDLError>`].
@@ -34,4 +35,6 @@ pub enum MDLError {
     SpecError(#[from] crate::specfile::SpecError),
     #[error("download error")]
     DownloadError(#[from] crate::download::DownloadError),
+    #[error("postprocessing error")]
+    PostError(#[from] crate::post::PostError),
 }

@@ -1,5 +1,5 @@
-mod playlist;
 mod chapters;
+mod playlist;
 
 use std::fs;
 use std::path::Path;

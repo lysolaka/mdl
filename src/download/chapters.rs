@@ -51,6 +51,12 @@ impl Chapters {
             }
             return Err(e.into());
         }
+        log::info!(
+            "Finished downloading {} ({}) to {}",
+            self.title(),
+            self.url(),
+            outdir.display()
+        );
         Ok(())
     }
 }
