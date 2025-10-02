@@ -266,6 +266,14 @@ impl Format {
             Format::Mp3 => "mp3",
         }
     }
+
+    /// The format's preffered quality
+    pub fn quality(&self) -> &'static str {
+        match self {
+            Format::Flac => "8",
+            Format::Mp3 => "2",
+        }
+    }
 }
 
 impl std::fmt::Display for Format {
