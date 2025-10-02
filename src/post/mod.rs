@@ -47,7 +47,7 @@ fn ffmpeg_log_parse(message: &str) -> Option<(&str, &str)> {
         }
     }
 
-    level.map(|lbl| (lbl, remainder.trim_start()))
+    level.map(|lvl| (lvl, remainder.trim_start()))
 }
 
 #[derive(Debug, thiserror::Error)]

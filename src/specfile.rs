@@ -53,7 +53,7 @@ impl Playlist {
     }
 
     /// An iterator over the playlist's tracks.
-    pub fn tracks(&self) -> std::slice::Iter<PlaylistTrack> {
+    pub fn tracks(&self) -> std::slice::Iter<'_, PlaylistTrack> {
         self.tracks.iter()
     }
 }
@@ -182,7 +182,7 @@ impl Chapters {
     }
 
     /// An iterator over the chapter tracks.
-    pub fn tracks(&self) -> std::slice::Iter<ChapterTrack> {
+    pub fn tracks(&self) -> std::slice::Iter<'_, ChapterTrack> {
         self.tracks.iter()
     }
 }
