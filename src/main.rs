@@ -1,10 +1,13 @@
 use std::error::Error;
 
+use url::Url;
+
 use mdl::logger;
+use mdl::fetch;
 use mdl::specfile::{Spec, Format};
 
 fn main() {
-    logger::init(log::LevelFilter::Info);
+    logger::init(log::LevelFilter::Trace);
     if let Err(e) = main_impl() {
         eprintln!("\nError: {}", e);
 
@@ -45,11 +48,14 @@ fn main_impl() -> mdl::Result<()> {
     //     i.write_to(Some("specs/"))?;
     // }
 
-    let spec = Spec::read_from("specs/inazuma_2.toml")?;
+    let spec = Spec::read_from("specs/dawaj.toml")?;
     match spec {
-        Spec::Playlist(_) => unreachable!(), 
+        Spec::Playlist(playlist) => {
+            playlist.download(Some("dl"))?;
+            playlist.postprocess(Format::Mp3, true, Some("dl"))?;
+        }, 
         Spec::Chapters(chapters) => {
-            // chapters.download(Some("dl"))?;
+            chapters.download(Some("dl"))?;
             chapters.postprocess(Format::Mp3, true, Some("dl"))?;
         },
     }
