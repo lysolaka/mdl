@@ -52,7 +52,8 @@ fn main_impl() -> mdl::Result<()> {
     match spec {
         Spec::Playlist(playlist) => {
             playlist.download(Some("dl"))?;
-            playlist.postprocess(Format::Mp3, true, Some("dl"))?;
+            playlist.postprocess(Format::Flac, true, Some("dl"))?;
+            playlist.tag(Format::Flac, Some("dl"), Some("out"))?;
         }, 
         Spec::Chapters(chapters) => {
             chapters.download(Some("dl"))?;

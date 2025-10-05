@@ -54,6 +54,11 @@ impl Playlist {
         &self.header.title
     }
 
+    /// Returns the cover URL.
+    pub fn cover_url(&self) -> &Url {
+        &self.header.cover
+    }
+
     /// An iterator over the playlist's tracks.
     pub fn tracks(&self) -> std::slice::Iter<'_, PlaylistTrack> {
         self.tracks.iter()

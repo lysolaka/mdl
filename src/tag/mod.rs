@@ -1,3 +1,5 @@
+mod playlist;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -114,15 +116,26 @@ fn get_cover(cover: &Url) -> crate::Result<(Vec<u8>, &'static str)> {
         let path = cover
             .to_file_path()
             .map_err(|_| TagError::BadPath(cover.clone()))?;
+        log::debug!("Reading cover data from {}", path.display());
         let data = fs::read(&path)?;
         let mime = infer::get(&data)
             .ok_or_else(|| TagError::UnknownMime(format!("{}", path.display())))?;
         Ok((data, mime.mime_type()))
     } else {
+        log::debug!("Fetching cover art from {}", cover);
         let response = reqwest::blocking::get(cover.clone()).map_err(|e| TagError::from(e))?;
         let data = response.bytes().map_err(|e| TagError::from(e))?;
         let mime = infer::get(&data).ok_or_else(|| TagError::UnknownMime(cover.to_string()))?;
         Ok((data.to_vec(), mime.mime_type()))
+    }
+}
+
+/// A better version of [`fs::exists()`].
+fn check_exists(path: impl AsRef<Path>) -> crate::Result<()> {
+    match fs::exists(path.as_ref()) {
+        Ok(true) => Ok(()),
+        Ok(false) => Err(TagError::BrokenPath(path.as_ref().to_path_buf()).into()),
+        Err(e) => Err(TagError::FileNotFound(path.as_ref().to_path_buf(), e).into()),
     }
 }
 
@@ -132,6 +145,14 @@ pub enum TagError {
     UnknownMime(String),
     #[error("cannot determine the file path of `{0}`")]
     BadPath(Url),
+    #[error("IO error when {0}")]
+    IoError(&'static str, #[source] std::io::Error),
+    #[error("cannot tag `{0}`: file not found")]
+    FileNotFound(PathBuf, #[source] std::io::Error),
+    #[error("cannot tag `{0}`: broken symlink")]
+    BrokenPath(PathBuf),
+    #[error("cannot tag {0}: cannot find the input files directory `{1}`")]
+    NoIndir(String, PathBuf),
     #[error("fetching the cover failed")]
     FetchError(#[from] reqwest::Error),
     #[error("writing FLAC tag failed")]
