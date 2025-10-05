@@ -27,7 +27,7 @@ pub struct Tag {
     pub artists: String,
     /// Album artists concatenated with commas.
     pub album_artists: String,
-    /// Album release year, for ID3 tags it's skipped because f*ck (we have a beef with) ID3.
+    /// Album release year, for ID3 tags it may be skipped because we have a beef with ID3.
     pub release_year: String,
 }
 
@@ -83,6 +83,14 @@ impl Tag {
         tag.set_genre(self.genre);
         tag.set_artist(self.artists);
         tag.set_album_artist(self.album_artists);
+        // we most likely have a valid i32, but I don't want to risk an unwrap
+        if let Ok(y) = self.release_year.parse::<i32>() {
+            let year = id3::Timestamp { year: y, ..Default::default() };
+            // Spam all dates, maybe one will work, I hate this
+            tag.set_date_recorded(year);
+            tag.set_date_released(year);
+            tag.set_original_date_released(year);
+        }
 
         let pic = Picture {
             mime_type: mime.to_string(),
