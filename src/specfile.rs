@@ -6,6 +6,8 @@ use std::path::{Path, PathBuf};
 use rustc_hash::FxHasher;
 use url::Url;
 
+use crate::tag::Tag;
+
 /// Structure representing a playlist specfile.
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Playlist {
@@ -104,6 +106,24 @@ impl PlaylistTrack {
             _ => false,
         }
     }
+
+    /// Construct a [`Tag`] representing the [`PlaylistTrack`].
+    ///
+    /// `parent` is the playlist album spec, which the track is a part of.
+    pub fn tag(&self, parent: &Playlist) -> Tag {
+        let year = parent.header.release_year.chars().take(4).collect();
+        Tag {
+            title: self.title.clone(),
+            album_title: parent.header.title.clone(),
+            track: self.track_num,
+            track_total: parent.header.track_total,
+            genre: parent.header.genre.clone(),
+            artists: self.artists.join(", "),
+            album_artists: parent.header.album_artists.join(", "),
+            release_year: year,
+        }
+    }
+
 }
 
 /// Structure representing a chapters specfile.
@@ -168,7 +188,12 @@ impl Chapters {
     pub fn is_url_ok(&self) -> bool {
         match self.header.url.host_str() {
             Some("www.youtube.com") => {
-                let is_video = self.header.url.query_pairs().find(|(k, _)| k == "v").is_some();
+                let is_video = self
+                    .header
+                    .url
+                    .query_pairs()
+                    .find(|(k, _)| k == "v")
+                    .is_some();
                 let is_single = self.header.url.query_pairs().count() == 1;
                 is_video && is_single
             }
@@ -196,6 +221,24 @@ impl ChapterTrack {
     /// Return a tuple of `(start_time, end_time)`.
     pub fn range(&self) -> (f32, f32) {
         (self.start_time, self.end_time)
+    }
+
+    /// Construct a [`Tag`] representing the [`ChapterTrack`].
+    ///
+    /// `parent` is the chapter album spec, which the track is a part of, 
+    /// `tracks` is a tuple of `(track_num, track_total)`.
+    pub fn tag(&self, tracks: (u32, u32), parent: &Chapters) -> Tag {
+        let year = parent.header.release_year.chars().take(4).collect();
+        Tag {
+            title: self.title.clone(),
+            album_title: parent.header.title.clone(),
+            track: tracks.0,
+            track_total: tracks.1,
+            genre: parent.header.genre.clone(),
+            artists: self.artists.join(", "),
+            album_artists: parent.header.album_artists.join(", "),
+            release_year: year,
+        }
     }
 }
 

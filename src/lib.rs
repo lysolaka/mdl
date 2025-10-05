@@ -5,6 +5,7 @@ pub mod fetch;
 pub mod logger;
 pub mod post;
 pub mod specfile;
+pub mod tag;
 
 /// Result type, equivalent to [`std::result::Result<T, MDLError>`].
 ///
@@ -37,4 +38,6 @@ pub enum MDLError {
     DownloadError(#[from] crate::download::DownloadError),
     #[error("postprocessing error")]
     PostError(#[from] crate::post::PostError),
+    #[error("tagging error")]
+    TagError(#[from] crate::tag::TagError),
 }
