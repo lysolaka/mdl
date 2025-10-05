@@ -177,6 +177,11 @@ impl Chapters {
         &self.header.url
     }
 
+    /// Returns the cover URL.
+    pub fn cover_url(&self) -> &Url {
+        &self.header.cover
+    }
+
     /// The [`Chapters`] file ID used for uniquely naming files.
     ///
     /// It is implemented as a non-cryptografic hash of the URL hashed using [`rustc_hash::FxHasher`].

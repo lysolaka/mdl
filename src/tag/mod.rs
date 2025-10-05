@@ -1,3 +1,4 @@
+mod chapters;
 mod playlist;
 
 use std::fs;

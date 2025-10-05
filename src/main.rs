@@ -48,7 +48,7 @@ fn main_impl() -> mdl::Result<()> {
     //     i.write_to(Some("specs/"))?;
     // }
 
-    let spec = Spec::read_from("specs/dawaj.toml")?;
+    let spec = Spec::read_from("specs/inazuma1_3.toml")?;
     match spec {
         Spec::Playlist(playlist) => {
             playlist.download(Some("dl"))?;
@@ -57,7 +57,8 @@ fn main_impl() -> mdl::Result<()> {
         }, 
         Spec::Chapters(chapters) => {
             chapters.download(Some("dl"))?;
-            chapters.postprocess(Format::Mp3, true, Some("dl"))?;
+            chapters.postprocess(Format::Flac, true, Some("dl"))?;
+            chapters.tag(Format::Flac, Some("dl"), Some("out"))?;
         },
     }
     Ok(())
