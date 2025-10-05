@@ -22,6 +22,7 @@ fn main() {
                 i += 1;
             }
         }
+        std::process::exit(-1);
     }
 }
 
