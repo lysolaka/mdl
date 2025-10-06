@@ -72,9 +72,10 @@ impl Chapters {
 }
 
 impl ChapterTrack {
-    fn split_from<P>(&self, file: P, outfile: P, target: Format) -> crate::Result<()>
+    fn split_from<P1, P2>(&self, file: P1, outfile: P2, target: Format) -> crate::Result<()>
     where
-        P: AsRef<Path>,
+        P1: AsRef<Path>,
+        P2: AsRef<Path>,
     {
         let (start, end) = self.range();
         log::debug!("Split range: {}s : {}s", start, end);

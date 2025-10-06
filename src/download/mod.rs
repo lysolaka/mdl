@@ -11,10 +11,7 @@ use url::Url;
 
 use crate::logger;
 
-fn download<P>(url: &Url, outpath: P) -> Result<(), DownloadError>
-where
-    P: AsRef<Path>,
-{
+fn download(url: &Url, outpath: impl AsRef<Path>) -> Result<(), DownloadError> {
     Python::attach(|py| -> PyResult<()> {
         let logger = Bound::new(py, logger::MDLogger)?;
         let opts = PyDict::new(py);

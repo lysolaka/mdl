@@ -14,9 +14,10 @@ impl Chapters {
     ///
     /// The output files will be located at `<outdir>/<self.title>` or `<self.title>` if `outdir`
     /// is `None`.
-    pub fn tag<P>(&self, target: Format, indir: Option<P>, outdir: Option<P>) -> crate::Result<()>
+    pub fn tag<P1, P2>(&self, target: Format, indir: Option<P1>, outdir: Option<P2>) -> crate::Result<()>
     where
-        P: AsRef<Path>,
+        P1: AsRef<Path>,
+        P2: AsRef<Path>,
     {
         log::info!("Tagging {}", self.title());
         let indir = match indir {

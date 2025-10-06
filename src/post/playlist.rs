@@ -72,9 +72,10 @@ impl Playlist {
 }
 
 impl PlaylistTrack {
-    fn convert<P>(&self, file: P, outfile: P, target: Format) -> crate::Result<()>
+    fn convert<P1, P2>(&self, file: P1, outfile: P2, target: Format) -> crate::Result<()>
     where
-        P: AsRef<Path>,
+        P1: AsRef<Path>,
+        P2: AsRef<Path>,
     {
         let mut child = Command::new("ffmpeg")
             .env("AV_LOG_FORCE_NOCOLOR", "1")
