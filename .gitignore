@@ -1,5 +1,6 @@
 /.venv
 /dl
+/out
 /specs
 /target
 cli-to-api.py

@@ -29,7 +29,6 @@ impl Playlist {
             return Err(DownloadError::IoError("creating the output directory", e).into());
         }
 
-        let mut is_complete = true;
         let len = self.tracks().len();
         for (i, t) in self
             .tracks()
@@ -56,7 +55,7 @@ impl Playlist {
                             t.title(),
                             t.url()
                         );
-                        is_complete = false;
+                        log::warn!("({}/{}) Skipping {} ({})", i + 1, len, t.title(), t.url());
                         continue;
                     }
                 };
@@ -69,7 +68,7 @@ impl Playlist {
                         t.url(),
                         e
                     );
-                    is_complete = false;
+                    log::warn!("({}/{}) Skipping {} ({})", i + 1, len, t.title(), t.url());
                 }
             } else {
                 log::info!(
@@ -89,10 +88,7 @@ impl Playlist {
                         t.url(),
                         e
                     );
-                    is_complete = false;
-                    if let Some(source) = e.source() {
-                        log::error!("{}", source);
-                    }
+                    return Err(e.into());
                 }
             }
         }
@@ -102,11 +98,8 @@ impl Playlist {
             self.id(),
             outdir.display()
         );
-        if is_complete {
-            Ok(())
-        } else {
-            Err(DownloadError::Incomplete.into())
-        }
+
+        Ok(())
     }
 }
 

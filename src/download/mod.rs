@@ -26,6 +26,7 @@ where
         let outtmpl = PyDict::new(py);
         outtmpl.set_item("default", outpath.as_ref().to_string_lossy())?;
         opts.set_item("outtmpl", outtmpl)?;
+        opts.set_item("overwrites", true)?;
         opts.set_item("logger", logger)?;
 
         let yt_dlp = PyModule::import(py, "yt_dlp")?;
@@ -42,8 +43,6 @@ pub enum DownloadError {
     Python(#[from] pyo3::PyErr),
     #[error("IO error when {0}")]
     IoError(&'static str, #[source] std::io::Error),
-    #[error("not all files were downloaded/copied successfully")]
-    Incomplete,
     #[error("the URL `{0}` is not a former output of fetch")]
     InvalidURL(Url),
 }

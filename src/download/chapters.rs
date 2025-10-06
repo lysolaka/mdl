@@ -46,9 +46,6 @@ impl Chapters {
                 self.url(),
                 e
             );
-            if let Some(e) = e.source() {
-                log::error!("{}", e);
-            }
             return Err(e.into());
         }
         log::info!(
