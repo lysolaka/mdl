@@ -1,8 +1,5 @@
-use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
-
-use url::Url;
 
 use crate::specfile::Chapters;
 

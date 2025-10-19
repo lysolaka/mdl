@@ -8,14 +8,12 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
-use pyo3::ffi::c_str;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 
 use pythonize::depythonize;
 use url::Url;
 
-use crate::MDLError;
 use crate::logger;
 use crate::specfile::SpecError;
 

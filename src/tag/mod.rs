@@ -131,15 +131,6 @@ fn get_cover(cover: &Url) -> crate::Result<(Vec<u8>, &'static str)> {
     }
 }
 
-/// A better version of [`fs::exists()`].
-fn check_exists(path: impl AsRef<Path>) -> crate::Result<()> {
-    match fs::exists(path.as_ref()) {
-        Ok(true) => Ok(()),
-        Ok(false) => Err(TagError::BrokenPath(path.as_ref().to_path_buf()).into()),
-        Err(e) => Err(TagError::FileNotFound(path.as_ref().to_path_buf(), e).into()),
-    }
-}
-
 #[derive(Debug, thiserror::Error)]
 pub enum TagError {
     #[error("unknown mime type of `{0}`")]

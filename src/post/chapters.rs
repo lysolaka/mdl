@@ -118,7 +118,7 @@ impl ChapterTrack {
 
         let status = child.wait().map_err(|e| PostError::SubprocessError(e))?;
         if let Some(logger) = logger {
-            logger.join();
+            let _ = logger.join();
         }
 
         match status.success() {

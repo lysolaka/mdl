@@ -4,7 +4,6 @@ use anstyle::{AnsiColor, Style};
 use log::Level;
 use once_cell::sync::OnceCell;
 
-use pyo3::ffi::c_str;
 use pyo3::prelude::*;
 
 static LOGGER: OnceCell<Logger> = OnceCell::new();

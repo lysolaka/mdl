@@ -1,11 +1,7 @@
-use std::fs;
-use std::io::{self, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use serde::ser::{Error, SerializeStruct};
+use serde::ser::SerializeStruct;
 use url::Url;
-
-use crate::specfile::SpecError;
 
 /// A struct representing a fetched album from signle video's chapters.
 ///

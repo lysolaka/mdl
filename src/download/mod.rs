@@ -1,7 +1,6 @@
 mod chapters;
 mod playlist;
 
-use std::fs;
 use std::path::Path;
 
 use pyo3::prelude::*;

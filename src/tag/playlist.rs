@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use crate::specfile::{Format, Playlist, PlaylistTrack};
+use crate::specfile::{Format, Playlist};
 
 use super::TagError;
 
