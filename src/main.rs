@@ -1,9 +1,13 @@
 use std::error::Error;
+use std::path::PathBuf;
 
 use clap::Parser;
+use itertools::Itertools;
 
+use mdl::cli::{self, Cli, Subcommand};
 use mdl::logger;
-use mdl::cli::Cli;
+
+mod impls;
 
 const ERR_COLOR: anstyle::Style = anstyle::AnsiColor::BrightRed.on_default().bold();
 
@@ -29,6 +33,19 @@ fn main() {
 }
 
 fn main_impl(args: Cli) -> mdl::Result<()> {
-    println!("{:#?}", args);
-    Ok(())
+    match args.action {
+        Subcommand::Fetch(fetch_args) => fetch_impl(&fetch_args),
+        Subcommand::Download(download_args) => todo!(),
+        Subcommand::Tag(tag_args) => todo!(),
+    }
+}
+
+fn fetch_impl(args: &cli::FetchArgs) -> mdl::Result<()> {
+    let mapping = args.url.iter().zip_longest(args.id.iter());
+
+    match args.fetch_mode() {
+        cli::FetchEnum::Chapters => impls::fetch_chapters(args.outdir.as_ref(), mapping),
+        cli::FetchEnum::ChaptersRecursive => impls::fetch_chapters_recursive(args.outdir.as_ref(), mapping),
+        cli::FetchEnum::Playlist => impls::fetch_playlist(args.outdir.as_ref(), mapping),
+    }
 }

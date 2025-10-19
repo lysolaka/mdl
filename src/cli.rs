@@ -52,6 +52,25 @@ pub struct FetchArgs {
     pub url: Vec<url::Url>,
 }
 
+impl FetchArgs {
+    pub fn fetch_mode(&self) -> FetchEnum {
+        if self.mode.chapters && self.recursive {
+            FetchEnum::ChaptersRecursive
+        } else if self.mode.chapters {
+            FetchEnum::Chapters
+        } else {
+            FetchEnum::Playlist
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum FetchEnum {
+    Chapters,
+    ChaptersRecursive,
+    Playlist,
+}
+
 #[derive(Debug, clap::Args)]
 #[group(required = true, multiple = false)]
 pub struct FetchMode {
@@ -67,6 +86,7 @@ pub struct FetchMode {
     pub playlist: bool,
 }
 
+/// Download files according to a specfile
 #[derive(Debug, clap::Args)]
 pub struct DownloadArgs {
     /// Output directory for the downloaded files.
@@ -80,6 +100,7 @@ pub struct DownloadArgs {
     pub spec: Vec<PathBuf>,
 }
 
+/// Postprocess, split and tag downloaded files
 #[derive(Debug, clap::Args)]
 pub struct TagArgs {
     /// Audio codec to use.
