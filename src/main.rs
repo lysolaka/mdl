@@ -1,9 +1,8 @@
 use std::error::Error;
 
 use clap::Parser;
-use itertools::Itertools;
 
-use mdl::cli::{self, Cli, Subcommand};
+use mdl::cli::{Cli, Subcommand};
 use mdl::logger;
 
 mod impls;
@@ -33,18 +32,8 @@ fn main() {
 
 fn main_impl(args: Cli) -> mdl::Result<()> {
     match args.action {
-        Subcommand::Fetch(fetch_args) => fetch_impl(&fetch_args),
-        Subcommand::Download(download_args) => todo!(),
-        Subcommand::Tag(tag_args) => todo!(),
-    }
-}
-
-fn fetch_impl(args: &cli::FetchArgs) -> mdl::Result<()> {
-    let mapping = args.url.iter().zip_longest(args.id.iter());
-
-    match args.fetch_mode() {
-        cli::FetchEnum::Chapters => impls::fetch_chapters(args.outdir.as_ref(), mapping),
-        cli::FetchEnum::ChaptersRecursive => impls::fetch_chapters_recursive(args.outdir.as_ref(), mapping),
-        cli::FetchEnum::Playlist => impls::fetch_playlist(args.outdir.as_ref(), mapping),
+        Subcommand::Fetch(fetch_args) => impls::fetch_impl(&fetch_args),
+        Subcommand::Download(download_args) => impls::download_impl(&download_args),
+        Subcommand::Tag(tag_args) => impls::tag_impl(&tag_args),
     }
 }
