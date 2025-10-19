@@ -297,7 +297,7 @@ impl Spec {
 /// The target format of audio files.
 ///
 /// For now supported are FLAC and MP3 with their respective tag formats
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, clap::ValueEnum)]
 pub enum Format {
     Flac,
     Mp3,

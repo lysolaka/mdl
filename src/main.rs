@@ -1,15 +1,17 @@
 use std::error::Error;
 
-use url::Url;
+use clap::Parser;
 
 use mdl::logger;
-use mdl::fetch;
-use mdl::specfile::{Spec, Format};
+use mdl::cli::Cli;
+
+const ERR_COLOR: anstyle::Style = anstyle::AnsiColor::BrightRed.on_default().bold();
 
 fn main() {
-    logger::init(log::LevelFilter::Trace);
-    if let Err(e) = main_impl() {
-        eprintln!("\nError: {}", e);
+    let cli = Cli::parse();
+    logger::init(cli.verbosity.filter());
+    if let Err(e) = main_impl(cli) {
+        eprintln!("\n{ERR_COLOR}error{ERR_COLOR:#}: {}", e);
 
         let mut source = e.source();
         if source.is_some() {
@@ -26,41 +28,7 @@ fn main() {
     }
 }
 
-fn main_impl() -> mdl::Result<()> {
-    // let u = "https://soundcloud.com/alcomindz/sets/koldi-kolins-dawaj-mixtape-2018";
-    // let url = Url::parse(&u)?;
-    // let info = fetch::playlist(&url, Some("dawaj"))?;
-    // info.write_to(Some("specs/"))?;
-    //
-    // let u = "https://www.youtube.com/playlist?list=PLx6F6orIEZdmbMQyQKYXq2R0XLgYk1Lpw";
-    // let url = Url::parse(&u)?;
-    // let info = fetch::playlist(&url, Some("012"))?;
-    // info.write_to(Some("specs/"))?;
-    //
-    // let u = "https://www.youtube.com/watch?v=vnd35SLG4Yc";
-    // let url = Url::parse(&u)?;
-    // let info = fetch::chapters(&url, Some("v5-2"))?;
-    // info.write_to(Some("specs/"))?;
-    //
-    // let u = "https://www.youtube.com/playlist?list=PLqWr7dyJNgLK45KSPhhti4FcWLhEWlegt";
-    // let url = Url::parse(&u)?;
-    // let info = fetch::chapters_recursive(&url, Some("inazuma"))?;
-    // for i in info {
-    //     i.write_to(Some("specs/"))?;
-    // }
-
-    let spec = Spec::read_from("specs/inazuma1_3.toml")?;
-    match spec {
-        Spec::Playlist(playlist) => {
-            playlist.download(Some("dl"))?;
-            playlist.postprocess(Format::Flac, true, Some("dl"))?;
-            playlist.tag(Format::Flac, Some("dl"), Some("out"))?;
-        }, 
-        Spec::Chapters(chapters) => {
-            chapters.download(Some("dl"))?;
-            chapters.postprocess(Format::Flac, true, Some("dl"))?;
-            chapters.tag(Format::Flac, Some("dl"), Some("out"))?;
-        },
-    }
+fn main_impl(args: Cli) -> mdl::Result<()> {
+    println!("{:#?}", args);
     Ok(())
 }

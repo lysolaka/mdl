@@ -1,5 +1,6 @@
 #![allow(unused)]
 
+pub mod cli;
 pub mod download;
 pub mod fetch;
 pub mod logger;
