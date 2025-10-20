@@ -20,7 +20,13 @@ The idea is as follows:
 3. Download the album
 4. Tag the downloaded files
 
-Steps 1, 3 and 4 are done using the CLI, as for step 2 - the specfile is yours to edit.
+Steps 1, 3 and 4 are done using the CLI, as for step 2 - the specfile is yours to edit. For more detailed instructions see [Usage](#usage).
+
+# Dependencies
+
+- `yt-dlp` preferrably the newest version. This can be easily done with Python's virtual environments.
+- Satisfy the Python dependencies for [`pyo3`](https://github.com/PyO3/pyo3).
+- (OPTIONAL) `bgutils-ytdl-pot-provider` or another PO Token provider for `yt-dlp`. This is highly recommended to avoid download issues.
 
 # Supported websites
 
@@ -65,4 +71,62 @@ metadata than YouTube.
 
 # Usage
 
-TODO: (cli)
+1. Fetch a specfile
+
+Find something to download and run `mdl fetch` with the options you want, here's a brief of those options:
+```
+Fetch a specfile from a URL
+
+Usage: mdl fetch [OPTIONS] <--chapters|--playlist> <URL>...
+
+Arguments:
+  <URL>...  URLs to fetch specfiles from
+
+Options:
+  -c, --chapters      Fetch a single video's chapters as an album
+  -p, --playlist      Fetch a playlist as an album
+  -r, --recursive     If using --chapters, fetch all videos in the playlist as if they were separate URLs passed with --chapters
+  -o, --outdir <DIR>  Output directory for the specfiles
+  -i, --id <ID>       Overrides the specfile's ID
+```
+
+Use `mdl help fetch` or `mdl fetch --help` for a more detailed explanation of each option. If you want you may specify multiple 
+URLs to fetch multiple specfiles.
+
+2. Edit the specfile
+
+Once the specfile is fetched, it's yours to edit. See [Specfile Format](#specfile-format).
+
+3. Download the media
+
+Run `mdl download` with your specfile (or specfiles). You may customise the behaviour with some options:
+```
+Download files according to a specfile
+
+Usage: mdl download [OPTIONS] <SPEC>...
+
+Arguments:
+  <SPEC>...  Specfiles of albums to download
+
+Options:
+  -o, --outdir <DIR>  Output directory for the downloaded files
+```
+
+4. Tag the downloaded files
+
+Once downloaded you may use the files as they are, but it is not recommended. Run `mdl tag` to convert them to the format of your 
+choice and fill in the metadata from the specfile. The options for `tag` are:
+```
+Postprocess, split and tag downloaded files
+
+Usage: mdl tag [OPTIONS] --target <FORMAT> <SPEC>...
+
+Arguments:
+  <SPEC>...  Specfiles of albums to tag
+
+Options:
+  -t, --target <FORMAT>  Audio codec to use [possible values: flac, mp3]
+  -i, --indir <DIR>      Directory of the previously downloaded files
+  -o, --outdir <DIR>     Output directory for the tagged files
+  -k, --keep             Keep the untagged, unprocessed, downloaded files
+```
