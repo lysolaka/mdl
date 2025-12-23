@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use serde::ser::{Error, SerializeStruct};
+use serde::{Deserialize, Deserializer};
 use url::Url;
 
 /// A structure representing a fetched playlist and its interesting data.
@@ -40,10 +41,18 @@ struct Track {
     id: String,
     extractor: String,
     title: String,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "none_to_empty")]
     artists: Vec<String>,
     #[serde(rename = "playlist_index")]
     track_num: u32,
+}
+
+/// A fix for [`Track`], where the artists field could be `NoneType`.
+fn none_to_empty<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Ok(Option::<Vec<String>>::deserialize(deserializer)?.unwrap_or_default())
 }
 
 impl serde::Serialize for Playlist {
@@ -120,7 +129,7 @@ pub fn playlist(url: &Url, id: Option<&str>) -> crate::Result<Playlist> {
         Err(e) => {
             log::error!("{}", e);
             return Err(e.into());
-        },
+        }
     };
     log::info!("Fetching playlist info of {}", url);
     let info = super::fetch(&url)?;
@@ -136,6 +145,6 @@ pub fn playlist(url: &Url, id: Option<&str>) -> crate::Result<Playlist> {
         None => {
             log::trace!("No ID provided for {}, using {}", url, info.id);
             Ok(info)
-        },
+        }
     }
 }
