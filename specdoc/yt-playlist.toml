@@ -10,7 +10,7 @@
 # This id can be changed - it is used for naming directories and logging. In other words it is for you to change.
 id = "PLIC0e5gHaJVvWtPHxZ37hSOlxWSsq8pmX"
 # The title of the album - used for tagging and as the name of the output directory for tagged files.
-# Do not worry about making it path safe, the program will sanitise the path if necessary (not yet implemented).
+# Do not worry about making it path safe, the program will sanitise the path if necessary.
 title = "KOLDI - YAMAHASAKE EP [2016]"
 # The release year of the album. It may not be used when the output format is `mp3` because ID3 is annoying with dates
 # and it does not display them in music players anyway (maybe a library issue or the music player's).

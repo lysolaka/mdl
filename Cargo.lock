@@ -766,7 +766,7 @@ checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
 name = "mdl"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anstyle",
  "clap",
@@ -780,6 +780,7 @@ dependencies = [
  "pythonize",
  "reqwest",
  "rustc-hash",
+ "sanitise-file-name",
  "serde",
  "thiserror",
  "toml",
@@ -1178,6 +1179,12 @@ name = "ryu"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
+
+[[package]]
+name = "sanitise-file-name"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19d36299972b96b8ae7e8f04ecbf75fb41a27bf3781af00abcf57609774cb911"
 
 [[package]]
 name = "schannel"

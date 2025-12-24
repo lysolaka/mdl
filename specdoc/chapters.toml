@@ -12,7 +12,7 @@ id = "B2JFHBB-zRE"
 # Do not touch this URL - it was obtained by the program and will be passed to `yt-dlp`.
 url = "https://www.youtube.com/watch?v=B2JFHBB-zRE"
 # The title of the album - used for tagging and as the name of the output directory for tagged files.
-# Do not worry about making it path safe, the program will sanitise the path if necessary (not yet implemented).
+# Do not worry about making it path safe, the program will sanitise the path if necessary.
 title = "Realm of Tranquil Eternity - Disc 3: Battles of Inazuma｜Genshin Impact"
 # The release year of the album. It may not be used when the output format is `mp3` because ID3 is annoying with dates
 # and it does not display them in music players anyway (maybe a library issue or the music player's).

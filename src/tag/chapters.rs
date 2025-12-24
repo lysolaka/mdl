@@ -2,6 +2,8 @@ use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use sanitise_file_name::sanitise;
+
 use crate::specfile::{Chapters, Format};
 
 use super::TagError;
@@ -34,8 +36,8 @@ impl Chapters {
         }
 
         let outdir = match outdir {
-            Some(d) => d.as_ref().join(self.title()),
-            None => PathBuf::from(self.title()),
+            Some(d) => d.as_ref().join(sanitise(self.title())),
+            None => PathBuf::from(sanitise(self.title())),
         };
 
         log::debug!("Creating output directory {}", outdir.display());
