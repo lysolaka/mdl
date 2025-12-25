@@ -62,7 +62,7 @@ impl Playlist {
         for (i, track) in self.tracks().enumerate() {
             log::info!("({}/{}) Tagging {}", i +1, len, track.title());
             let tag = track.tag(&self);
-            let outpath = outdir.join(format!("{:02}. {}.{}", tag.track, tag.title, target.ext()));
+            let outpath = outdir.join(format!("{:02}. {}.{}", tag.track, sanitise(&tag.title), target.ext()));
             let inpath = indir.join(format!("{}.{}", track.id(), target.ext()));
             log::debug!("Copying {} to \"{}\"", inpath.display(), outpath.display());
             if let Err(e) = fs::copy(&inpath, &outpath) {
