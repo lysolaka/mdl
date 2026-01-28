@@ -24,9 +24,19 @@ Steps 1, 3 and 4 are done using the CLI, as for step 2 - the specfile is yours t
 
 # Dependencies
 
-- `yt-dlp` preferrably the newest version. This can be easily done with Python's virtual environments.
+- [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) preferrably the newest version. This can be easily done with Python's virtual environments.
 - Satisfy the Python dependencies for [`pyo3`](https://github.com/PyO3/pyo3).
-- (OPTIONAL) `bgutils-ytdl-pot-provider` or another PO Token provider for `yt-dlp`. This is highly recommended to avoid download issues.
+- [`bgutils-ytdl-pot-provider`](https://github.com/Brainicism/bgutil-ytdlp-pot-provider) or another PO Token provider for `yt-dlp`. This is now required because the player client is now hardcoded to `mweb`. See [this](https://github.com/yt-dlp/yt-dlp/wiki/PO-Token-Guide#current-po-token-enforcement) article on the `yt-dlp` wiki.
+
+# Recommended workflow
+
+1. Install:
+    - a JS runtime for `yt-dlp-ejs`
+    - Docker for `bgutils-ytdl-pot-provider`
+2. Create a Python virtual environment and activate it
+3. Install `yt-dlp` with `pip` as shown in their [wiki](https://github.com/yt-dlp/yt-dlp/wiki/Installation)
+4. Install `bgutils-ytdl-pot-provider` using the Docker (HTTPS Server) method
+5. Run `mdl` with that Python environment activated
 
 # Supported websites
 
@@ -35,10 +45,10 @@ may be able to edit a specfile in a way to produce a signle track.
 
 Supported album types:
 1. Playlist - playlists containing tracks as their entries
-   - YouTube
-   - Soundcloud
+    - YouTube
+    - Soundcloud
 2. Chapters - videos split into chapters, each being a separate track
-   - YouTube only
+    - YouTube only
 
 In the second case it is also possible to fetch many chapter albums at once. If a playlist has many videos, each containing 
 chapters, using recursive fetch produces multiple specfiles - each specfile corresponding to a video. This is a fetch only 
