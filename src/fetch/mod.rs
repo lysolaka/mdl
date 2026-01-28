@@ -44,15 +44,24 @@ fn fetch_impl<'py>(py: Python<'py>, url: &Url) -> PyResult<Bound<'py, PyAny>> {
     let opts = PyDict::new(py);
     opts.set_item("dump_single_json", true)?;
     opts.set_item("extract_flat", false)?;
+
+    let extractor_args = PyDict::new(py);
+    let youtube = PyDict::new(py);
+    youtube.set_item("player_client", ["mweb"])?;
+    extractor_args.set_item("youtube", youtube)?;
+    opts.set_item("extractor_args", extractor_args)?;
+
     opts.set_item("noprogress", true)?;
     opts.set_item("quiet", true)?;
     opts.set_item("simulate", true)?;
     opts.set_item("verbose", true)?;
     opts.set_item("color", "never")?;
     opts.set_item("format", "ba/b")?;
+
     let outtmpl = PyDict::new(py);
     outtmpl.set_item("default", "%(id)s")?;
     opts.set_item("outtmpl", outtmpl)?;
+
     opts.set_item("logger", logger)?;
 
     let yt_dlp = PyModule::import(py, "yt_dlp")?;
